@@ -27,8 +27,7 @@ class NormalizedFourierKernelAttention(torch.nn.Module):
         self.N = N
         self.num_hidden = num_hidden
         self.h = h
-        self.num_hidden_per_attn = num_hidden // h
-        self.bias = torch.nn.Parameter(torch.zeros(self.h))        
+        self.num_hidden_per_attn = num_hidden // h     
         self.real_amps = torch.nn.Parameter(init_kernels(self.h, self.N-1).clone().detach().requires_grad_(True))
         self.imag_amps = torch.nn.Parameter(torch.zeros(self.h, 1, 1, self.N-1, requires_grad=True))
         self.scale_amps = torch.nn.Parameter(torch.zeros(self.h, 1, 1, 1, requires_grad=True))

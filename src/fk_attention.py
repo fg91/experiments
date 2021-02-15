@@ -14,7 +14,6 @@ class FourierKernelAttention(torch.nn.Module):
         self.num_hidden = num_hidden
         self.h = h
         self.num_hidden_per_attn = num_hidden // h
-        self.bias = torch.nn.Parameter(torch.zeros(self.h))        
         self.real_amps = torch.nn.Parameter(init_kernels(self.h, self.N).clone().detach().requires_grad_(True))
         self.imag_amps = torch.nn.Parameter(torch.zeros(self.h, 1, 1, self.N, requires_grad=True))
 
