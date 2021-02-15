@@ -141,8 +141,6 @@ class NormalizedFourierKernelAttention(torch.nn.Module):
         for i in range(kr.size()[0]):
             plt.plot(kx[i].detach().numpy(), kr[i].detach().numpy(), c='r', label='Re', marker='o')
             plt.plot(kx[i].detach().numpy(), ki[i].detach().numpy(), c='b', label='Im', marker='o')
-            #plt.plot(kr[i].detach().numpy(), c='r', label='Re', marker='o')
-            #plt.plot(ki[i].detach().numpy(), c='b', label='Im', marker='o')
             plt.legend()
 
     def viz_kernel_in_spatial_domain(self):
