@@ -1,4 +1,4 @@
-from .modules import weights_init
+from .modules import weights_init, MLP
 
 import torch
 
@@ -13,6 +13,8 @@ class KernelAttention(torch.nn.Module):
         self.num_hidden = num_hidden
         self.h = h
         self.num_hidden_per_attn = num_hidden // h
+
+        self.kernel = MLP(num_hidden, self.h, n_hidden_layers=2)
     
     def reset_parameters(self):
         weights_init(self)
