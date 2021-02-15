@@ -128,3 +128,44 @@ class NormalizedFourierKernelAttention(torch.nn.Module):
         step = 1 / (N_kernel -1 )
         #return torch.arange(0, 1 + step, step=step) * 2 *  math.pi
         return torch.arange(0, 1 + step, step=step) * N_kernel * math.pi #Test just half space* 2
+
+    def viz_kernel_in_fourier_domain(self):
+        import matplotlib.pyplot as plt
+
+        kr, ki, ks = self.get_kernel_params()
+        kr = kr.view([self.h, -1])
+        ki = ki.view([self.h, -1])
+        kx = (self.x_amps*ks).view([self.h, -1])
+
+        plt.figure()
+        for i in range(kr.size()[0]):
+            plt.plot(kx[i].detach().numpy(), kr[i].detach().numpy(), c='r', label='Re', marker='o')
+            plt.plot(kx[i].detach().numpy(), ki[i].detach().numpy(), c='b', label='Im', marker='o')
+            #plt.plot(kr[i].detach().numpy(), c='r', label='Re', marker='o')
+            #plt.plot(ki[i].detach().numpy(), c='b', label='Im', marker='o')
+            plt.legend()
+
+    def viz_kernel_in_spatial_domain(self):
+        import matplotlib.pyplot as plt
+
+        kr, ki, ks = self.get_kernel_params()
+  
+        step = 1./(kr.shape[-1]-1)
+        xx = torch.arange(0, 1+step, step=step).view(1,1,1,-1)
+        kr = lspline_kernel(self.x_amps, kr, ks, xx)
+        ki = lspline_kernel(self.x_amps, ki, ks, xx)
+
+        freq = self.get_freqs(kr.shape[-1])
+
+        kr = kr.view([self.h, -1])
+        ki = ki.view([self.h, -1])
+
+        print(ks[:,-1])
+
+        plt.figure()
+        for i in range(kr.size()[0]):
+            step = 0.01
+            x = torch.arange(-1, 1+step, step=step)
+            y = [torch.sum(torch.cos(freq*x[q])*kr[i] + torch.sin(freq*x[q])*ki[i]).detach().numpy() for q in range(x.shape[0])]
+
+            plt.plot(x.detach().numpy(), y)
