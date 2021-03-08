@@ -5,9 +5,10 @@ import numpy as np
 
 class TrainModel(pl.LightningModule):
  
-    def __init__(self, model):
+    def __init__(self, model, max_context_points: int=20):
         super().__init__()
         self.model = model
+        self.max_context_points=max_context_points
  
         if torch.cuda.is_available():  
           self.dev = "cuda:0" 
@@ -24,7 +25,7 @@ class TrainModel(pl.LightningModule):
  
     def training_step(self, batch, batch_idx):
         x, y = batch
-        i_q = np.random.randint(2, 20)
+        i_q = np.random.randint(2, self.max_context_points)
  
         xy = torch.cat([x[:, :i_q], y[:, :i_q]], -1)
         q = x#[:, :i_q*3]
